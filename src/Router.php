@@ -2,36 +2,43 @@
 
 namespace App;
 
-class Router {
+class Router
+{
     private $routes = [];
 
-    public function get($path, $handler) {
+    public function get($path, $handler)
+    {
         $this->routes['GET'][$path] = $handler;
     }
 
-    public function post($path, $handler) {
+    public function post($path, $handler)
+    {
         $this->routes['POST'][$path] = $handler;
     }
 
-    public function put($path, $handler) {
+    public function put($path, $handler)
+    {
         $this->routes['PUT'][$path] = $handler;
     }
 
-    public function delete($path, $handler) {
+    public function delete($path, $handler)
+    {
         $this->routes['DELETE'][$path] = $handler;
     }
 
-    private function getRequestBody() {
+    private function getRequestBody()
+    {
         // For testing environment
         if (isset($GLOBALS['__test_input'])) {
             return $GLOBALS['__test_input'];
         }
-        
+
         // For normal environment
         return file_get_contents('php://input');
     }
 
-    private function matchRoute($method, $uri): ?array {
+    private function matchRoute($method, $uri): ?array
+    {
         if (!isset($this->routes[$method])) {
             return null;
         }
@@ -53,7 +60,7 @@ class Router {
                 array_shift($matches);
 
                 $params = array_combine($paramNames[1], $matches);
-                
+
                 return [
                     'handler' => $handler,
                     'params' => $params
@@ -64,11 +71,12 @@ class Router {
         return null;
     }
 
-    public function handle($method, $uri) {
+    public function handle($method, $uri)
+    {
         $uri = parse_url($uri, PHP_URL_PATH);
-        
+
         $match = $this->matchRoute($method, $uri);
-        
+
         if (!$match) {
             header('HTTP/1.1 404 Not Found');
             echo json_encode(['error' => 'Route not found']);
@@ -90,12 +98,12 @@ class Router {
         if (in_array($method, ['POST', 'PUT']) && !empty($requestBody)) {
             $match['params'] = array_merge($match['params'], ['data' => $requestBody]);
         }
-        
+
         $response = call_user_func_array(
             [$controllerInstance, $method],
             $match['params']
         );
-        
+
         header('Content-Type: application/json');
         echo json_encode($response);
     }

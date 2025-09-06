@@ -2,8 +2,10 @@
 
 namespace App\Requests;
 
-class UserRequest extends Request {
-    public function rules(): array {
+class UserRequest extends Request
+{
+    public function rules(): array
+    {
         return [
             'firstName' => [
                 'required' => true,

@@ -20,8 +20,6 @@ abstract class TestCase extends BaseTestCase
 
     protected function createRequest(string $method, string $uri, array $data = []): array
     {
-        $_POST = [];
-
         $_SERVER['REQUEST_METHOD'] = $method;
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['HTTP_ACCEPT'] = 'application/json';

@@ -28,7 +28,7 @@ class UserControllerTest extends TestCase
     public function test_can_get_empty_users_list(): void
     {
         $response = $this->getJsonResponseData($this->get('/users'));
-        
+
         $this->assertArrayHasKey('success', $response);
         $this->assertTrue($response['success']);
         $this->assertArrayHasKey('data', $response);

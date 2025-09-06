@@ -2,8 +2,10 @@
 
 namespace App\Controllers;
 
-class Controller {
-    protected function success($data, $statusCode = 200) {
+class Controller
+{
+    protected function success($data, $statusCode = 200)
+    {
         http_response_code($statusCode);
         return [
             'success' => true,
@@ -11,7 +13,8 @@ class Controller {
         ];
     }
 
-    protected function error($message, $statusCode = 400) {
+    protected function error($message, $statusCode = 400)
+    {
         http_response_code($statusCode);
         return [
             'success' => false,
@@ -19,7 +22,8 @@ class Controller {
         ];
     }
 
-    protected function getRequestBody() {
+    protected function getRequestBody()
+    {
         // Check if we're in a test environment
         if (isset($GLOBALS['HTTP_RAW_POST_DATA'])) {
             return json_decode($GLOBALS['HTTP_RAW_POST_DATA'], true);

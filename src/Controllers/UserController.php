@@ -6,19 +6,23 @@ use App\Models\User;
 use App\Controllers\Controller;
 use App\Resources\UserResource;
 
-class UserController extends Controller {
+class UserController extends Controller
+{
     private $user;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->user = new User();
     }
 
-    public function index() {
+    public function index()
+    {
         $users = $this->user->all();
         return $this->success(UserResource::collection($users));
     }
 
-    public function show(int $id) {
+    public function show(int $id)
+    {
         $user = $this->user->find($id);
         if (!$user) {
             return $this->error('User not found', 404);
@@ -26,9 +30,10 @@ class UserController extends Controller {
         return $this->success((new UserResource($user))->response());
     }
 
-    public function store() {
+    public function store()
+    {
         $data = $this->getRequestBody();
-        
+
         if (!$data) {
             return $this->error('Invalid input data', 400);
         }
@@ -36,7 +41,7 @@ class UserController extends Controller {
         try {
             $request = new \App\Requests\UserRequest($data);
             $validatedData = $request->validated();
-            
+
             $user = $this->user->create($validatedData);
             return $this->success(
                 (new UserResource($user))->response(),
@@ -49,7 +54,8 @@ class UserController extends Controller {
         }
     }
 
-    public function update(int $id) {
+    public function update(int $id)
+    {
         $user = $this->user->find($id);
         if (!$user) {
             return $this->error('User not found', 404);
@@ -74,7 +80,8 @@ class UserController extends Controller {
         }
     }
 
-    public function delete(int $id) {
+    public function delete(int $id)
+    {
         $user = $this->user->find($id);
         if (!$user) {
             return $this->error('User not found', 404);

@@ -2,23 +2,27 @@
 
 namespace App\Requests;
 
-abstract class Request {
+abstract class Request
+{
     protected $data;
     protected $rules = [];
     protected $errors = [];
 
-    public function __construct(array $data) {
+    public function __construct(array $data)
+    {
         $this->data = $data;
         $this->rules = $this->rules();
     }
 
     abstract public function rules(): array;
 
-    public function validate(): bool {
+    public function validate(): bool
+    {
         return $this->validateData($this->data);
     }
 
-    public function validated(): array {
+    public function validated(): array
+    {
         if (!$this->validate()) {
             throw new \InvalidArgumentException(json_encode($this->getErrors()));
         }
@@ -33,12 +37,13 @@ abstract class Request {
         return $validatedData;
     }
 
-    protected function validateData(array $data): bool {
+    protected function validateData(array $data): bool
+    {
         $this->errors = [];
-        
+
         foreach ($this->rules as $field => $rules) {
             $value = $data[$field] ?? null;
-            
+
             // Check for required fields (handles null, empty string, and whitespace)
             if ($rules['required']) {
                 if (!isset($data[$field]) || trim((string)$data[$field]) === '') {
@@ -46,7 +51,7 @@ abstract class Request {
                     continue;
                 }
             }
-            
+
             // Skip remaining validations if the field is empty and not required
             if (!isset($data[$field]) || $data[$field] === '') {
                 continue;
@@ -55,8 +60,8 @@ abstract class Request {
             // MaxLength validation
             if (isset($rules['maxLength']) && strlen($value) > $rules['maxLength']) {
                 $this->errors[$field][] = ucfirst($field)
-                                            . " cannot exceed " 
-                                            . $rules['maxLength'] . 
+                                            . " cannot exceed "
+                                            . $rules['maxLength'] .
                                             " characters";
             }
 
@@ -70,7 +75,7 @@ abstract class Request {
                 if (isset($rules['unique']) && $rules['unique']) {
                     $storageManager = \App\Models\StorageManager::getInstance();
                     $existingUsers = $storageManager->all('users');
-                    
+
                     foreach ($existingUsers as $existingUser) {
                         if ($existingUser['email'] === $value) {
                             $this->errors[$field][] = ucfirst($field) . " has already been taken";
@@ -97,7 +102,7 @@ abstract class Request {
                 if (isset($rules['minAge'])) {
                     $today = new \DateTime();
                     $minBirthDate = $today->modify("-{$rules['minAge']} years");
-                    
+
                     if ($date > $minBirthDate) {
                         $this->errors[$field][] = ucfirst($field)
                                                     . " must be at least "
@@ -111,7 +116,8 @@ abstract class Request {
         return empty($this->errors);
     }
 
-    protected function castValue(string $field, $value) {
+    protected function castValue(string $field, $value)
+    {
         $rules = $this->rules[$field];
 
         if (isset($rules['date']) && $rules['date']) {
@@ -126,7 +132,8 @@ abstract class Request {
         return $value;
     }
 
-    public function getErrors() {
+    public function getErrors()
+    {
         return $this->errors;
     }
 }
